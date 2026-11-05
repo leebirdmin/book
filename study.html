@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>독서 활동 기록장</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #f1f5f9;
+            font-family: Arial, sans-serif;
+            color: #334155;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .character-count {
+            text-align: right;
+            margin-top: 6px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📚 독서 활동 기록장</h1>
+
+        <p class="description">
+            오늘 읽은 책과 감상을 기록해 보세요!
+        </p>
+
+        <form
+            id="readingForm"
+            method="POST"
+            action="https://script.google.com/macros/s/AKfycbyDwUL_OmFAEf6h-jzUx0VzSziMzSoh1hNnafKRTkaDKLFejdndDPiRcbGLobPy9N4e/exec"
+        >
+
+            <label for="bookTitle">책 제목</label>
+            <input
+                type="text"
+                id="bookTitle"
+                name="bookTitle"
+            >
+
+            <label for="readingMinutes">독서 시간(분)</label>
+            <input
+                type="number"
+                id="readingMinutes"
+                name="readingMinutes"
+            >
+
+            <label for="review">한 줄 감상</label>
+            <textarea
+                id="review"
+                name="review"
+                maxlength="100"
+            ></textarea>
+
+            <div class="character-count" id="characterCount">
+                0/100
+            </div>
+
+            <button type="submit">
+                기록 저장
+            </button>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        // form과 입력 요소 가져오기
+        const form = document.getElementById("readingForm");
+
+        const bookTitle = document.getElementById("bookTitle");
+
+        const readingMinutes = document.getElementById("readingMinutes");
+
+        const review = document.getElementById("review");
+
+        const characterCount = document.getElementById("characterCount");
+
+
+        // 감상 글자 수 실시간 표시
+        review.addEventListener("input", function() {
+
+            const currentLength = review.value.length;
+
+            characterCount.textContent = currentLength + "/100";
+
+        });
+
+
+        // 기록 저장 버튼을 눌렀을 때 실행
+        form.addEventListener("submit", function(event) {
+
+            // 기존 데이터 제출을 잠시 중단
+            event.preventDefault();
+
+
+            // 1. 책 제목 공란 및 공백 검사
+            if (bookTitle.value.trim() === "") {
+
+                alert("책 제목을 입력해 주세요.");
+
+                bookTitle.focus();
+
+                return;
+            }
+
+
+            // 2. 독서 시간 미입력 검사
+            if (readingMinutes.value === "") {
+
+                alert("독서 시간을 입력해 주세요.");
+
+                readingMinutes.focus();
+
+                return;
+            }
+
+
+            // 3. 독서 시간 정수 및 범위 검사
+            const minutes = Number(readingMinutes.value);
+
+            if (
+                !Number.isInteger(minutes) ||
+                minutes < 1 ||
+                minutes > 180
+            ) {
+
+                alert("독서 시간은 1~180 사이의 정수만 입력할 수 있습니다.");
+
+                readingMinutes.focus();
+
+                return;
+            }
+
+
+            // 4. 한 줄 감상 공란 및 공백 검사
+            if (review.value.trim() === "") {
+
+                alert("한 줄 감상을 입력해 주세요.");
+
+                review.focus();
+
+                return;
+            }
+
+
+            // 5. 한 줄 감상 글자 수 검사
+            const reviewLength = review.value.length;
+
+            if (reviewLength < 10 || reviewLength > 100) {
+
+                alert("한 줄 감상은 10~100자 사이로 입력해 주세요.");
+
+                review.focus();
+
+                return;
+            }
+
+
+            // 모든 검사를 통과하면 데이터 제출
+            form.submit();
+
+        });
+
+    </script>
+
+</body>
+</html>
